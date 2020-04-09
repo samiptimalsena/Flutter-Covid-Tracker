@@ -25,6 +25,20 @@ class Data{
     seriousCritical: json["latest_stat_by_country"][0]["serious_critical"],
     );  
   }
+
+  factory Data.fromJson2(Map<String,dynamic> json){
+    return Data(
+      countryName: json["country_name"],
+    totalCases: json["cases"],
+    newCases: json["new_cases"],
+    activeCases: json["active_cases"],
+    totalDeaths: json["deaths"],
+    newDeaths: json["new_deaths"],
+    totalRecovered: json["total_recovered"],
+    seriousCritical: json["serious_critical"],
+
+    );
+  }
 }
 
 class TotalData{
@@ -58,3 +72,11 @@ Future<TotalData> fetchTotalData() async{
   final response=await http.get("https://brp.com.np/covid/alldata.php");
   return TotalData.fromJson(json.decode(response.body));
 }
+
+Future<List<Data>> fetchData() async{
+  final response=await http.get("https://brp.com.np/covid/country.php");
+  var getData=json.decode(response.body)['countries_stat'] as List;
+  List<Data> dataList=getData.map((data)=>Data.fromJson2(data)).toList();
+  return dataList;
+}
+

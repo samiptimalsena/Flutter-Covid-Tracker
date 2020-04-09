@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'api.dart';
 import 'template.dart';
+import 'countryView.dart';
+
 
 void main() {
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Corona Updates",
-      home: Covid()));
+      initialRoute: '/',
+      routes: {
+        '/':(context)=>Covid(),
+        '/countryView':(context)=>Country(ModalRoute.of(context).settings.arguments),
+      },
+      ));
 }
 
 class Covid extends StatefulWidget {
@@ -17,28 +24,34 @@ class Covid extends StatefulWidget {
 class _CovidState extends State<Covid> {
   var totalData;
   var nepalData;
+  var data;
 
   Future<Null> refreshList() async {
     await new Future.delayed(Duration(seconds: 2));
     setState(() {
       totalData = fetchTotalData();
       nepalData = fetchNepalData();
+      data=fetchData();
     });
     return null;
   }
+
+  
+  
 
   @override
   void initState() {
     super.initState();
     totalData = fetchTotalData();
     nepalData = fetchNepalData();
+    data=fetchData();
   }
 
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     return Scaffold(
-        backgroundColor: Colors.yellow[50],
+      backgroundColor: Colors.green[50],
         appBar: AppBar(
           title: Text("Covid Updates"),
           backgroundColor: Colors.lightGreen,
@@ -98,7 +111,9 @@ class _CovidState extends State<Covid> {
                   child: Center(
                       child: OutlineButton(
                     child: Text("View by Country"),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/countryView',arguments: data);
+                    },
                     color: Colors.green,
                     shape: RoundedRectangleBorder(
                       borderRadius: new BorderRadius.circular(10.0),
@@ -107,62 +122,26 @@ class _CovidState extends State<Covid> {
                   )),
                 ),
                 Container(
-                  margin: const EdgeInsets.only(top:5.0),
-                  child:FutureBuilder<dynamic>(
-                    future:totalData,
-                    builder: (context,snapshots){
-                      if(snapshots.hasData ){
-                        return Text("Data taken at "+"${snapshots.data.timeStamp}"+" GMT+0");
-                      }else{
-                        return Column(children: <Widget>[
-                          CircularProgressIndicator()
-                        ],);
-                      }
-                    },
-                  )
-                )
+                    margin: const EdgeInsets.only(top: 5.0),
+                    child: FutureBuilder<dynamic>(
+                      future: totalData,
+                      builder: (context, snapshots) {
+                        if (snapshots.hasData) {
+                          return Text("Data taken at " +
+                              "${snapshots.data.timeStamp}" +
+                              " GMT+0");
+                        } else {
+                          return Column(
+                            children: <Widget>[CircularProgressIndicator()],
+                          );
+                        }
+                      },
+                    )),
+                    
               ],
             ),
             onRefresh: refreshList));
   }
 }
 
-/*
-FutureBuilder<Data>(
-        future: data,
-        builder: (context,snapshots){
-          if(snapshots.hasData){
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: [
-                  DataColumn(label: Text("Country Name")),
-                  DataColumn(label: Text("Total cases")),
-                  DataColumn(label: Text("New cases")),
-                  DataColumn(label: Text("Active cases")),
-                  DataColumn(label: Text("Total Deaths")),
-                  DataColumn(label: Text("New Deaths")),
-                  DataColumn(label: Text("Total Recovered")),
-                  DataColumn(label: Text("Serious/Critical")),
-                ],
-                rows: [
-                  DataRow(cells: [
-                    DataCell(Text(" ${snapshots.data.countryName}")),
-                     DataCell(Text(" ${snapshots.data.totalCases}"),),
-                      DataCell(Text("  ${snapshots.data.newCases}"),),
-                       DataCell(Text(" ${snapshots.data.activeCases}"),),
-                        DataCell(Text("  ${snapshots.data.totalDeaths}"),),
-                         DataCell(Text(" ${snapshots.data.newDeaths}"),),
-                          DataCell(Text(" ${snapshots.data.totalRecovered}"),),
-                          DataCell(Text("${snapshots.data.seriousCritical}")),
-                        
-                  ])
-                ],
-              ),
-            );
-          }else{
-            return CircularProgressIndicator();
-          }
-        },
-      )
- */
+
