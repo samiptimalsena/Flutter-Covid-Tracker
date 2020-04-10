@@ -1,5 +1,53 @@
 import 'package:flutter/material.dart';
 import 'api.dart';
+import 'template.dart';
+
+class DataSource extends DataTableSource {
+  var _data;
+  DataSource(this._data);
+
+  int _selectedCount = 0;
+
+  @override
+  int get rowCount => _data.length;
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get selectedRowCount => _selectedCount;
+
+  @override
+  DataRow getRow(int index) {
+    final Data elements = _data[index];
+    return DataRow.byIndex(index: index, cells: <DataCell>[
+      DataCell(Text(
+        elements.countryName,
+        style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.w500),
+      )),
+      DataCell(
+        Text(
+          elements.totalCases,
+          style: row,
+        ),
+      ),
+      DataCell(Text(elements.newCases, style: row)),
+      DataCell(
+        Text(elements.activeCases, style: row),
+      ),
+      DataCell(
+        Text(elements.totalDeaths, style: row),
+      ),
+      DataCell(
+        Text(elements.newDeaths, style: row),
+      ),
+      DataCell(
+        Text(elements.totalRecovered, style: row),
+      ),
+      DataCell(Text(elements.seriousCritical, style: row)),
+    ]);
+  }
+}
 
 class Country extends StatefulWidget {
   final dataList;
@@ -11,14 +59,20 @@ class Country extends StatefulWidget {
 class _CountryState extends State<Country> {
   var data;
 
+  Future<Null> refreshList() async{
+     await new Future.delayed(Duration(seconds:2));
+    setState(() {
+       data=fetchData();
+    });
+    return null;
+  }
 
   @override
   void initState() {
     super.initState();
-    data=widget.dataList;
+    data = widget.dataList;
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,58 +80,41 @@ class _CountryState extends State<Country> {
         title: Text("Covid Updates"),
         backgroundColor: Colors.lightGreen,
       ),
-      body: ListView(
-        children: <Widget>[
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: FutureBuilder<List<Data>>(
+      body: RefreshIndicator(
+          onRefresh: refreshList,
+              child: ListView(
+          children: <Widget>[
+            FutureBuilder<dynamic>(
                 future: data,
                 builder: (context, snapshots) {
                   if (snapshots.hasData) {
-                    snapshots.data.removeWhere((item)=>item.countryName=="");
-                    var data=snapshots.data;
-                    return DataTable(
-                columns: [
-                  DataColumn(label: Text("Country Name")),
-                  DataColumn(label: Text("Total cases")),
-                  DataColumn(label: Text("New cases")),
-                  DataColumn(label: Text("Active cases")),
-                  DataColumn(label: Text("Total Deaths")),
-                  DataColumn(label: Text("New Deaths")),
-                  DataColumn(label: Text("Total Recovered")),
-                  DataColumn(label: Text("Serious/Critical")),
-                ],
-                rows: data.map((elements)=>DataRow(
-                  cells: <DataCell>[
-                     DataCell(Text(elements.countryName)),
-                      DataCell(Text(elements.totalCases),),
-                      DataCell(Text(elements.newCases),),
-                       DataCell(Text(elements.activeCases),),
-                        DataCell(Text(elements.totalDeaths),),
-                         DataCell(Text(elements.newDeaths),),
-                          DataCell(Text(elements.totalRecovered),),
-                          DataCell(Text(elements.seriousCritical)),
-                  ]
-                )).toList(),
-               /* rows:[
-                   DataRow(cells: [
-                  DataCell(Text(data[0].countryName)),
-                      DataCell(Text(data[0].totalCases),),
-                      DataCell(Text(data[0].newCases),),
-                       DataCell(Text(data[0].activeCases),),
-                        DataCell(Text(data[0].totalDeaths),),
-                         DataCell(Text(data[0].newDeaths),),
-                          DataCell(Text(data[0].totalRecovered),),
-                          DataCell(Text(data[0].seriousCritical)),
-                ]),]*/
-              
-                );
+                    snapshots.data.removeWhere((item) => item.countryName == "");
+                    var results = snapshots.data;
+                    return PaginatedDataTable(
+                      rowsPerPage: 10,
+                      columnSpacing: 10,
+                      dataRowHeight: 46,
+                      header: Text("Current Pandemic Counts",style: TextStyle(color: Colors.green),),
+                      columns: [
+                        DataColumn(label: Text("Country Name", style: col)),
+                        DataColumn(label: Text("Total cases", style: col)),
+                        DataColumn(label: Text("New cases", style: col)),
+                        DataColumn(label: Text("Active cases", style: col)),
+                        DataColumn(label: Text("Total Deaths", style: col)),
+                        DataColumn(label: Text("New Deaths", style: col)),
+                        DataColumn(label: Text("Total Recovered", style: col)),
+                        DataColumn(label: Text("Serious/Critical", style: col)),
+                      ],
+                      source: DataSource(results),
+                    );
                   } else {
-                    return CircularProgressIndicator();
+                    return Column(children: <Widget>[
+                        CircularProgressIndicator()
+                    ],);
                   }
                 }),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

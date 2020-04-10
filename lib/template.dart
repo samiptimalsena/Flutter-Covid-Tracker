@@ -57,6 +57,11 @@ Widget colCont(Widget first, Widget second) {
   );
 }
 
+TextStyle col=TextStyle(
+  fontSize: 13
+);
+TextStyle row= TextStyle(fontWeight: FontWeight.w500);
+
 
 
 
