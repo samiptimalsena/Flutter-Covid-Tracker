@@ -51,8 +51,8 @@ class _CovidState extends State<Covid> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.green[50],
         appBar: AppBar(
+          leading: Icon(Icons.home),
           title: Text("Covid Updates"),
           backgroundColor: Colors.lightGreen,
         ),

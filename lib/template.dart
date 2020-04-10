@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'api.dart';
 
 Widget textSection(
     String text, Color textColor, double size, double marg, bool bold) {
@@ -50,6 +51,54 @@ Widget future(dynamic getFuture, int condition, double size) {
         }
       });
 }
+
+class DataSource extends DataTableSource {
+  var _data;
+  DataSource(this._data);
+
+  int _selectedCount = 0;
+
+  @override
+  int get rowCount => _data.length;
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get selectedRowCount => _selectedCount;
+
+  @override
+  DataRow getRow(int index) {
+    final Data elements = _data[index];
+    return DataRow.byIndex(index: index, cells: <DataCell>[
+      DataCell(Text(
+        elements.countryName,
+        style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.w500),
+      )),
+      DataCell(
+        Text(
+          elements.totalCases,
+          style: row,
+        ),
+      ),
+      DataCell(Text(elements.newCases, style: row)),
+      DataCell(
+        Text(elements.activeCases, style: row),
+      ),
+      DataCell(
+        Text(elements.totalDeaths, style: row),
+      ),
+      DataCell(
+        Text(elements.newDeaths, style: row),
+      ),
+      DataCell(
+        Text(elements.totalRecovered, style: row),
+      ),
+      DataCell(Text(elements.seriousCritical, style: row)),
+    ]);
+  }
+}
+
 
 Widget colCont(Widget first, Widget second) {
   return Column(
