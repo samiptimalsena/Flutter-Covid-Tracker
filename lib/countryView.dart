@@ -11,6 +11,7 @@ class Country extends StatefulWidget {
 
 class _CountryState extends State<Country> {
   var data;
+  var forSearch;
   var _searchHandler=TextEditingController();
   Widget _appBarTitle=Text("Covid Updates");
   Icon _actionIcon=Icon(Icons.search);
@@ -55,14 +56,39 @@ class _CountryState extends State<Country> {
       setState(() {
         _appBarTitle=Text("Covid Updates");
         _actionIcon=Icon(Icons.search);
+        _searchHandler.clear();
       });
     }
+  }
+
+  _CountryState(){
+    _searchHandler.addListener(
+      (){List<Data> tempList=[];
+        if(_searchHandler.text.isNotEmpty){
+          var _searchedText=_searchHandler.text;
+          for (var i = 0; i < data.length; i++) {
+            if(forSearch[i].countryName.toLowerCase().contains(_searchedText.toLowerCase())){
+              tempList.add(forSearch[i]);
+            }
+          }
+          setState(() {
+            data=tempList;
+          });}   
+        else{
+          setState(() {
+            tempList=forSearch;
+          data=tempList;
+          });
+        }
+      }
+    );
   }
 
   @override
   void initState() {
     super.initState();
     data = widget.dataList;
+    forSearch=widget.dataList;
   }
 
   @override
@@ -84,13 +110,7 @@ class _CountryState extends State<Country> {
           onRefresh: refreshList,
               child: ListView(
           children: <Widget>[
-            FutureBuilder<dynamic>(
-                future: data,
-                builder: (context, snapshots) {
-                  if (snapshots.hasData) {
-                    snapshots.data.removeWhere((item) => item.countryName == "");
-                    var results = snapshots.data;
-                    return PaginatedDataTable(
+                PaginatedDataTable(
                       rowsPerPage: 10,
                       columnSpacing: 10,
                       dataRowHeight: 46,
@@ -105,14 +125,8 @@ class _CountryState extends State<Country> {
                         DataColumn(label: Text("Total Recovered", style: col)),
                         DataColumn(label: Text("Serious/Critical", style: col)),
                       ],
-                      source: DataSource(results),
-                    );
-                  } else {
-                    return Column(children: <Widget>[
-                        CircularProgressIndicator()
-                    ],);
-                  }
-                }),
+                      source: DataSource(data),
+                    )
           ],
         ),
       ),

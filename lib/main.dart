@@ -31,12 +31,16 @@ class _CovidState extends State<Covid> {
     setState(() {
       totalData = fetchTotalData();
       nepalData = fetchNepalData();
-      data=fetchData();
+      data=getData();
     });
     return null;
   }
 
-  
+  Future<List<Data>> getData() async{
+    var result=await fetchData();
+    result.removeWhere((item) => item.countryName == "");
+    return result;
+  }
   
 
   @override
@@ -44,7 +48,11 @@ class _CovidState extends State<Covid> {
     super.initState();
     totalData = fetchTotalData();
     nepalData = fetchNepalData();
-    data=fetchData();
+    getData().then((result){
+      setState(() {
+        data=result;
+      });
+    });
   }
 
   @override
