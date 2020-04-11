@@ -3,17 +3,17 @@ import 'api.dart';
 import 'template.dart';
 import 'countryView.dart';
 
-
 void main() {
   runApp(MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: "Corona Updates",
-      initialRoute: '/',
-      routes: {
-        '/':(context)=>Covid(),
-        '/countryView':(context)=>Country(ModalRoute.of(context).settings.arguments),
-      },
-      ));
+    debugShowCheckedModeBanner: false,
+    title: "Corona Updates",
+    initialRoute: '/',
+    routes: {
+      '/': (context) => Covid(),
+      '/countryView': (context) =>
+          Country(ModalRoute.of(context).settings.arguments),
+    },
+  ));
 }
 
 class Covid extends StatefulWidget {
@@ -31,26 +31,22 @@ class _CovidState extends State<Covid> {
     setState(() {
       totalData = fetchTotalData();
       nepalData = fetchNepalData();
-      data=getData();
+      getData().then((result){
+        data=result;
+      });
     });
     return null;
   }
 
-  Future<List<Data>> getData() async{
-    var result=await fetchData();
-    result.removeWhere((item) => item.countryName == "");
-    return result;
-  }
-  
 
   @override
   void initState() {
     super.initState();
     totalData = fetchTotalData();
     nepalData = fetchNepalData();
-    getData().then((result){
+    getData().then((result) {
       setState(() {
-        data=result;
+        data=result;      
       });
     });
   }
@@ -120,7 +116,8 @@ class _CovidState extends State<Covid> {
                       child: OutlineButton(
                     child: Text("View by Country"),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/countryView',arguments: data);
+                      Navigator.pushNamed(context, '/countryView',
+                          arguments: data);
                     },
                     color: Colors.green,
                     shape: RoundedRectangleBorder(
@@ -136,7 +133,7 @@ class _CovidState extends State<Covid> {
                       builder: (context, snapshots) {
                         if (snapshots.hasData) {
                           return Text("Data taken at " +
-                              "${snapshots.data.timeStamp}" +
+                              snapshots.data.timeStamp +
                               " GMT+0");
                         } else {
                           return Column(
@@ -145,11 +142,8 @@ class _CovidState extends State<Covid> {
                         }
                       },
                     )),
-                    
               ],
             ),
             onRefresh: refreshList));
   }
 }
-
-
