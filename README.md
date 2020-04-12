@@ -1,16 +1,13 @@
-# covid
+Free Api:
 
-A new Flutter project.
+Nepal data: https://brp.com.np/covid/nepal.php
 
-## Getting Started
+Country wise data: https://brp.com.np/covid/country.php
 
-This project is a starting point for a Flutter application.
+Total data: https://brp.com.np/covid/alldata.php
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Some screenshots of UI:
+=
+  <img src="https://user-images.githubusercontent.com/51244494/79064060-541fe780-7cc5-11ea-9aa8-f4ca3f6996ed.png" height="400" width="200"/>
+  <img src="https://user-images.githubusercontent.com/51244494/79064175-664e5580-7cc6-11ea-8a22-c7335e89c2a2.png" height="400" width="200"/>
+                                                                                                                                    
