@@ -29,7 +29,7 @@ Widget future(dynamic getFuture, int condition, double size) {
               break;
             case 2:
               return textSection(
-                  snapshots.data.totalDeaths, Colors.black54, size, 5.0, true);
+                  snapshots.data.totalDeaths==""?"0":snapshots.data.totalDeaths, Colors.black54, size, 5.0, true);
               break;
             case 3:
               return textSection(

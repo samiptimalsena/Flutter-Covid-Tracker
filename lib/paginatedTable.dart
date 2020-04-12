@@ -31,7 +31,14 @@ class DataSource extends DataTableSource {
           style: row,
         ),
       ),
-      DataCell(Text(elements.newCases, style: row)),
+      DataCell(
+        Container(
+          color: Colors.yellow[100],
+          height:45 ,
+          margin: const EdgeInsets.only(right:10),
+          child:Center(child: Text(elements.newCases=="0"?"":"+"+elements.newCases, style:row )))
+        
+        ),
       DataCell(
         Text(elements.activeCases, style: row),
       ),
@@ -39,7 +46,11 @@ class DataSource extends DataTableSource {
         Text(elements.totalDeaths, style: row),
       ),
       DataCell(
-        Text(elements.newDeaths, style: row),
+        Container(
+          color: Colors.red[500],
+          height:42 ,
+          margin: const EdgeInsets.only(right:10),
+          child: Center(child: Text(elements.newDeaths=="0"?"":"+"+elements.newDeaths, style:TextStyle(fontWeight: FontWeight.w500,color: Colors.white)))),
       ),
       DataCell(
         Text(elements.totalRecovered, style: row),

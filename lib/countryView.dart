@@ -12,6 +12,16 @@ class Country extends StatefulWidget {
 class _CountryState extends State<Country> {
   var data;
 
+  Future<Null> refreshList() async{
+    await new Future.delayed(Duration(seconds: 2));
+    getData().then((result){
+      setState(() {
+        data=result;
+      });
+    });
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -33,8 +43,11 @@ class _CountryState extends State<Country> {
           )
         ],
       ),
-      body: ListView(
-        children: <Widget>[PDataTable(data, Colors.green)],
+      body: RefreshIndicator(
+              onRefresh: refreshList,
+              child: ListView(
+          children: <Widget>[PDataTable(data, Colors.green)],
+        ),
       ),
     );
   }
@@ -43,6 +56,7 @@ class _CountryState extends State<Country> {
 class DataSearch extends SearchDelegate<List<Data>> {
   List<Data> data;
   DataSearch(this.data);
+  var suggestionList;
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -79,12 +93,12 @@ class DataSearch extends SearchDelegate<List<Data>> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return null;
+    return ListView(children:[PDataTable(suggestionList,Colors.green)]);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final suggestionList = query.isEmpty
+     suggestionList = query.isEmpty
         ? data
         : data
             .where((item) =>
