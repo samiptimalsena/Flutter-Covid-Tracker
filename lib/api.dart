@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -76,17 +77,17 @@ class TotalData {
 }
 
 Future<Data> fetchNepalData() async {
-  final response = await http.get("https://brp.com.np/covid/nepal.php");
+  final response = await http.get(DotEnv().env['nepalDataApi']);
   return Data.fromJson(json.decode(response.body));
 }
 
 Future<TotalData> fetchTotalData() async {
-  final response = await http.get("https://brp.com.np/covid/alldata.php");
+  final response = await http.get(DotEnv().env['totalDataApi']);
   return TotalData.fromJson(json.decode(response.body));
 }
 
 Future<List<Data>> fetchData() async {
-  final response = await http.get("https://brp.com.np/covid/country.php");
+  final response = await http.get(DotEnv().env['dataApi']);
   var getData = json.decode(response.body)['countries_stat'] as List;
   List<Data> dataList = getData.map((data) => Data.fromJson2(data)).toList();
   return dataList;

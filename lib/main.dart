@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'api.dart';
 import 'template.dart';
 import 'countryView.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';         
 
-void main() {
+Future main() async{
+  await DotEnv().load('.env');
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     title: "Corona Updates",
